@@ -1,17 +1,15 @@
 package com.example.mybeaver.dto.print
 
 data class ResultPrint<out T : Any> private constructor(
-     val ok: Boolean,
-     val msg: String?,
-     val data: T?)
-{
+    val ok: Boolean,
+    val msg: String?,
+    val data: T?
+) {
     companion object {
-        fun success(data: MutableList<String?>?): ResultPrint<MutableList<String?>> {
-            return ResultPrint(true, "", data)
-        }
+        fun <T : Any> success(data: T?, msg: String = ""): ResultPrint<T> =
+            ResultPrint(true, msg, data)
 
-        fun fail(msg: String?): ResultPrint<Nothing> {
-            return ResultPrint(false, msg, null)
-        }
+        fun fail(msg: String?): ResultPrint<Nothing> =
+            ResultPrint(false, msg, null)
     }
 }

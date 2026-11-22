@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>MyBeaver: conexión</title>
+    <title>MyBeaver: conexiones</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
@@ -18,37 +18,49 @@
 
         <form id="connection-form" novalidate>
             <div class="field">
+                <label for="name">Nombre (para guardarla)</label>
+                <input id="name" name="name" type="text" placeholder="Mi VPS" autocomplete="off">
+            </div>
+            <div class="field">
                 <label for="host">Servidor</label>
                 <input id="host" name="host" type="text" placeholder="127.0.0.1" autocomplete="off" required>
             </div>
-
             <div class="field">
                 <label for="port">Puerto</label>
                 <input id="port" name="port" type="number" min="1" max="65535" placeholder="3306" inputmode="numeric" autocomplete="off" required>
             </div>
-
             <div class="field">
                 <label for="username">Usuario</label>
                 <input id="username" name="username" type="text" autocomplete="off" required>
             </div>
-
             <div class="field">
                 <label for="password">Contraseña</label>
                 <input id="password" name="password" type="password" autocomplete="off">
             </div>
 
-            <button id="connect-btn" type="submit">Conectar</button>
+            <div class="actions">
+                <button id="connect-btn" type="submit">Probar conexión</button>
+                <button id="save-btn" type="button" class="secondary">Guardar</button>
+            </div>
         </form>
 
         <p id="status" class="status" role="status" aria-live="polite" hidden></p>
     </section>
 
-    <section class="panel results" aria-labelledby="results-title">
-        <h2 id="results-title">Bases de datos</h2>
-        <p id="results-count" class="count" hidden></p>
-        <p id="results-empty" class="hint">Conéctate a un servidor para ver sus bases de datos.</p>
-        <ul id="db-list" class="db-list" hidden></ul>
-    </section>
+    <div class="stack">
+        <section class="panel" aria-labelledby="saved-title">
+            <h2 id="saved-title">Conexiones guardadas</h2>
+            <p id="saved-empty" class="hint">Todavía no hay conexiones guardadas.</p>
+            <ul id="saved-list" class="saved-list" hidden></ul>
+        </section>
+
+        <section class="panel results" aria-labelledby="results-title">
+            <h2 id="results-title">Bases de datos</h2>
+            <p id="results-count" class="count" hidden></p>
+            <p id="results-empty" class="hint">Conéctate a un servidor para ver sus bases de datos.</p>
+            <ul id="db-list" class="db-list" hidden></ul>
+        </section>
+    </div>
 </main>
 
 <script th:src="@{/js/connection.js}"></script>

@@ -184,3 +184,60 @@ button:disabled { opacity: 0.6; cursor: progress; }
 @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; }
 }
+
+/* ---- Fase 2: conexiones guardadas ---- */
+.stack { display: grid; gap: 1.25rem; }
+
+.actions { display: flex; gap: 0.5rem; }
+.actions button { flex: 1; margin-top: 0; }
+
+button.secondary {
+    color: var(--accent);
+    background: transparent;
+    border: 1px solid var(--accent);
+}
+
+.saved-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+}
+
+.saved-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.8rem;
+}
+
+.saved-list li + li { border-top: 1px solid var(--line); }
+
+.saved-info { flex: 1; min-width: 0; }
+.saved-name { font-weight: 650; overflow-wrap: anywhere; }
+
+.saved-meta {
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+}
+
+.saved-list button {
+    width: auto;
+    margin: 0;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.85rem;
+}
+
+.saved-list button.danger {
+    color: var(--error);
+    background: transparent;
+    border: 1px solid var(--error);
+}
+
+@media (max-width: 30rem) {
+    .saved-list li { flex-wrap: wrap; }
+    .saved-info { flex-basis: 100%; }
+}

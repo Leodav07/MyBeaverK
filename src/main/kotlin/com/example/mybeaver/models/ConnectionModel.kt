@@ -1,10 +1,10 @@
 package com.example.mybeaver.models
 
 data class ConnectionModel (
-    var id : Int = 0,
-    var name : String? = null,
-    var host: String? = null,
+    var id : String,
+    var name : String,
+    var host: String,
     var port: Int = 0,
-    var username: String? = null,
-    var password: String? = null
+    var username: String,
+    var password: String
 )
