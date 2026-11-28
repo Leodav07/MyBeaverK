@@ -3,12 +3,14 @@ package com.example.mybeaver.services
 import com.example.mybeaver.dto.ConnectionInfodto
 import com.example.mybeaver.dto.ConnectionSummary
 import com.example.mybeaver.dto.SaveConnectionRequest
+import com.example.mybeaver.dto.SessionInfo
 import com.example.mybeaver.exceptions.ConnectionNotFoundException
 import com.example.mybeaver.exceptions.DuplicateConnectionException
 import com.example.mybeaver.exceptions.InvalidConnectionDataException
 import com.example.mybeaver.models.ConnectionModel
 import com.example.mybeaver.security.PasswordCipher
 import com.example.mybeaver.storage.ConnectionStorage
+import com.example.mybeaver.storage.SessionConnections
 import org.springframework.stereotype.Service
 import java.sql.SQLException
 import java.util.UUID
@@ -17,7 +19,8 @@ import java.util.UUID
 class SavedConnectionServiceImpl(
     private val storage: ConnectionStorage,
     private val cipher: PasswordCipher,
-    private val connectionService: ConnectionInterface
+    private val connectionService: ConnectionInterface,
+    private val sessions: SessionConnections
 ) : SavedConnectionService {
 
     override fun list(): List<ConnectionSummary> =
@@ -55,6 +58,18 @@ class SavedConnectionServiceImpl(
         return connectionService.connection(
             ConnectionInfodto(saved.host, saved.port, saved.username, plainPassword)
         )
+    }
+
+    @Throws(SQLException::class)
+    override fun openSession(dto: ConnectionInfodto): SessionInfo {
+        validate("sesion", dto.host.trim(), dto.port, dto.username.trim())
+        val databases = connectionService.connection(dto) ?: mutableListOf()
+        val model = sessions.add(dto)
+        return SessionInfo(model.id, model.name, databases)
+    }
+
+    override fun closeSession(id: String) {
+        sessions.remove(id)
     }
 
     private fun validate(name: String, host: String, port: Int, username: String) {

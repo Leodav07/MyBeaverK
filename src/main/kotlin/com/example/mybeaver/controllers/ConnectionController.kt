@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/conn")
 class ConnectionController(private val connectionService: ConnectionInterface) {
 
-    // Los errores (SQLException, datos inválidos...) los traduce GlobalExceptionHandler
     @PostMapping("/connect")
     fun connect(@RequestBody dto: ConnectionInfodto): ResponseEntity<ResultPrint<MutableList<String?>>> {
         validate(dto)

@@ -1,7 +1,9 @@
 package com.example.mybeaver.controllers
 
+import com.example.mybeaver.dto.ConnectionInfodto
 import com.example.mybeaver.dto.ConnectionSummary
 import com.example.mybeaver.dto.SaveConnectionRequest
+import com.example.mybeaver.dto.SessionInfo
 import com.example.mybeaver.dto.print.ResultPrint
 import com.example.mybeaver.services.SavedConnectionService
 import org.springframework.http.HttpStatus
@@ -35,4 +37,14 @@ class SavedConnectionController(private val service: SavedConnectionService) {
     @PostMapping("/{id}/connect")
     fun connect(@PathVariable("id") id: String): ResponseEntity<ResultPrint<MutableList<String?>>> =
         ResponseEntity.ok(ResultPrint.success(service.connect(id)))
+
+    @PostMapping("/session")
+    fun openSession(@RequestBody dto: ConnectionInfodto): ResponseEntity<ResultPrint<SessionInfo>> =
+        ResponseEntity.ok(ResultPrint.success(service.openSession(dto)))
+
+    @DeleteMapping("/session/{id}")
+    fun closeSession(@PathVariable("id") id: String): ResponseEntity<Void> {
+        service.closeSession(id)
+        return ResponseEntity.noContent().build()
+    }
 }

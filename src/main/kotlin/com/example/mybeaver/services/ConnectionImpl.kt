@@ -11,16 +11,13 @@ class ConnectionImpl : ConnectionInterface {
 
     override fun connection(connecDto: ConnectionInfodto?): MutableList<String?>? {
         val dataBaseList: MutableList<String?> = ArrayList<String?>()
-        println("Entró al método")
         val url = "jdbc:mysql://" + connecDto?.host + ":" + connecDto?.port + "?connectTimeout=5000"
 
         DriverManager.getConnection(url, connecDto?.username, connecDto?.password).use { con ->
-            val stmt = con.createStatement()
-            val rs = stmt.executeQuery("SHOW DATABASES;")
-
-            while (rs.next()) {
-                val dbName = rs.getString("Database")
-                dataBaseList.add(dbName)
+            con.createStatement().use { stmt ->
+                stmt.executeQuery("SHOW DATABASES").use { rs ->
+                    while (rs.next()) dataBaseList.add(rs.getString("Database"))
+                }
             }
             return dataBaseList
         }

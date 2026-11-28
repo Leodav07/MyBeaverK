@@ -7,3 +7,10 @@ class DuplicateConnectionException(name: String) :
 
 class ConnectionNotFoundException(id: String) :
     RuntimeException("No existe una conexión guardada con id $id.")
+
+class ObjectNotFoundException(name: String) :
+    RuntimeException("No existe el objeto \"$name\" en esa base de datos.")
+
+class NotApplicableException(message: String) : RuntimeException(message)
+
+class PermissionDeniedException(message: String) : RuntimeException(message)

@@ -3,66 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>MyBeaver: conexiones</title>
+    <title>MyBeaver</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<header class="top">
-    <h1>MyBeaver</h1>
-    <p>Administra tus bases de datos MySQL desde el navegador.</p>
-</header>
 
-<main class="layout">
-    <section class="panel connect" aria-labelledby="connect-title">
-        <h2 id="connect-title">Nueva conexión</h2>
+<div id="view-connections">
+    <header class="top">
+        <h1>MyBeaver</h1>
+        <p>Administra tus bases de datos MySQL desde el navegador.</p>
+    </header>
 
-        <form id="connection-form" novalidate>
-            <div class="field">
-                <label for="name">Nombre (para guardarla)</label>
-                <input id="name" name="name" type="text" placeholder="Mi VPS" autocomplete="off">
-            </div>
-            <div class="field">
-                <label for="host">Servidor</label>
-                <input id="host" name="host" type="text" placeholder="127.0.0.1" autocomplete="off" required>
-            </div>
-            <div class="field">
-                <label for="port">Puerto</label>
-                <input id="port" name="port" type="number" min="1" max="65535" placeholder="3306" inputmode="numeric" autocomplete="off" required>
-            </div>
-            <div class="field">
-                <label for="username">Usuario</label>
-                <input id="username" name="username" type="text" autocomplete="off" required>
-            </div>
-            <div class="field">
-                <label for="password">Contraseña</label>
-                <input id="password" name="password" type="password" autocomplete="off">
-            </div>
+    <main class="layout">
+        <section class="panel connect" aria-labelledby="connect-title">
+            <h2 id="connect-title">Iniciar sesión</h2>
 
-            <div class="actions">
-                <button id="connect-btn" type="submit">Probar conexión</button>
-                <button id="save-btn" type="button" class="secondary">Guardar</button>
-            </div>
-        </form>
+            <form id="connection-form" novalidate>
+                <div class="field">
+                    <label for="name">Nombre (solo para guardarla)</label>
+                    <input id="name" name="name" type="text" placeholder="Mi VPS" autocomplete="off">
+                </div>
+                <div class="field">
+                    <label for="host">Servidor</label>
+                    <input id="host" name="host" type="text" placeholder="127.0.0.1" autocomplete="off" required>
+                </div>
+                <div class="field">
+                    <label for="port">Puerto</label>
+                    <input id="port" name="port" type="number" min="1" max="65535" value="3306" inputmode="numeric" autocomplete="off" required>
+                </div>
+                <div class="field">
+                    <label for="username">Usuario</label>
+                    <input id="username" name="username" type="text" autocomplete="off" required>
+                </div>
+                <div class="field">
+                    <label for="password">Contraseña</label>
+                    <input id="password" name="password" type="password" autocomplete="off">
+                </div>
 
-        <p id="status" class="status" role="status" aria-live="polite" hidden></p>
-    </section>
+                <div class="actions">
+                    <button id="connect-btn" type="submit">Conectar</button>
+                    <button id="save-btn" type="button" class="secondary">Guardar</button>
+                </div>
+            </form>
 
-    <div class="stack">
+            <p id="status" class="status" role="status" aria-live="polite" hidden></p>
+        </section>
+
         <section class="panel" aria-labelledby="saved-title">
             <h2 id="saved-title">Conexiones guardadas</h2>
             <p id="saved-empty" class="hint">Todavía no hay conexiones guardadas.</p>
             <ul id="saved-list" class="saved-list" hidden></ul>
+            <p class="hint small">«Conectar» inicia sesión sin guardar nada. «Guardar» la almacena con la contraseña cifrada.</p>
         </section>
+    </main>
+</div>
 
-        <section class="panel results" aria-labelledby="results-title">
-            <h2 id="results-title">Bases de datos</h2>
-            <p id="results-count" class="count" hidden></p>
-            <p id="results-empty" class="hint">Conéctate a un servidor para ver sus bases de datos.</p>
-            <ul id="db-list" class="db-list" hidden></ul>
-        </section>
-    </div>
-</main>
+<div id="view-workspace" class="workspace" hidden>
+    <aside class="panel sidebar" aria-label="Explorador de objetos">
+        <div class="ws-head">
+            <div class="ws-brand">MyBeaver</div>
+            <button id="ws-disconnect" type="button" class="secondary small">Desconectar</button>
+        </div>
+        <div class="ws-conn" id="ws-conn-name"></div>
 
-<script th:src="@{/js/connection.js}"></script>
+        <div class="field">
+            <label for="ws-db">Base de datos</label>
+            <select id="ws-db"></select>
+        </div>
+        <div class="actions">
+            <button id="ws-refresh" type="button" class="secondary small">Refrescar</button>
+            <button id="ws-new-db" type="button" class="secondary small">Nueva base</button>
+        </div>
+
+        <nav id="tree" class="tree" aria-label="Objetos"></nav>
+    </aside>
+
+    <section class="panel main">
+        <div class="tabs" role="tablist">
+            <button type="button" role="tab" class="tab" data-tab="detail" aria-selected="true">Objeto</button>
+            <button type="button" role="tab" class="tab" data-tab="sql" aria-selected="false">Editor SQL</button>
+            <button type="button" role="tab" class="tab" data-tab="create-table" aria-selected="false">Crear tabla</button>
+            <button type="button" role="tab" class="tab" data-tab="create-view" aria-selected="false">Crear vista</button>
+        </div>
+
+        <p id="ws-status" class="status" role="status" aria-live="polite" hidden></p>
+
+        <div id="tab-detail" class="tab-panel" role="tabpanel">
+            <p id="detail-empty" class="hint">Elige una base de datos y selecciona un objeto en el árbol de la izquierda.</p>
+            <div id="detail" hidden>
+                <div class="detail-head">
+                    <span id="detail-type" class="badge"></span>
+                    <h2 id="detail-name"></h2>
+                </div>
+                <p id="detail-sub" class="hint"></p>
+
+                <div id="detail-table-extra" hidden>
+                    <h3>Columnas</h3>
+                    <div id="detail-columns" class="grid-wrap"></div>
+                    <h3>Índices</h3>
+                    <div id="detail-indexes" class="grid-wrap"></div>
+                </div>
+
+                <h3>DDL generado desde la metadata</h3>
+                <textarea id="detail-ddl" class="code" rows="14" spellcheck="false" aria-label="DDL del objeto"></textarea>
+                <div class="toolbar">
+                    <button id="ddl-edit" type="button">Modificar en editor SQL</button>
+                    <button id="ddl-export" type="button" class="secondary">Exportar .sql</button>
+                    <button id="ddl-copy" type="button" class="secondary">Copiar</button>
+                    <button id="obj-data" type="button" class="secondary" hidden>Ver datos</button>
+                    <button id="obj-drop" type="button" class="danger" hidden>Generar DROP</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-sql" class="tab-panel" role="tabpanel" hidden>
+            <p class="hint small">Se ejecuta sobre la base <strong id="sql-db-label">(ninguna)</strong>. Acepta varias sentencias separadas por «;» y la orden DELIMITER. Ctrl+Enter ejecuta (si hay texto seleccionado, solo la selección).</p>
+            <textarea id="sql-input" class="code" rows="12" spellcheck="false" aria-label="Script SQL" placeholder="SELECT * FROM tabla;"></textarea>
+            <div class="toolbar">
+                <button id="sql-run" type="button">Ejecutar</button>
+                <button id="sql-export" type="button" class="secondary">Exportar .sql</button>
+                <button id="sql-open" type="button" class="secondary">Abrir .sql</button>
+                <input id="sql-file" type="file" accept=".sql,.txt" hidden>
+                <button id="sql-clear" type="button" class="secondary">Limpiar</button>
+                <label class="inline-field">Máx. filas
+                    <input id="sql-max" type="number" min="1" max="5000" value="500">
+                </label>
+            </div>
+            <div id="sql-results" class="results"></div>
+        </div>
+
+        <div id="tab-create-table" class="tab-panel" role="tabpanel" hidden>
+            <form id="ct-form" novalidate>
+                <div class="row">
+                    <div class="field grow">
+                        <label for="ct-name">Nombre de la tabla</label>
+                        <input id="ct-name" type="text" autocomplete="off" placeholder="clientes">
+                    </div>
+                    <div class="field">
+                        <label for="ct-engine">Motor</label>
+                        <select id="ct-engine">
+                            <option>InnoDB</option><option>MyISAM</option><option>MEMORY</option>
+                            <option>CSV</option><option>ARCHIVE</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="ct-comment">Comentario (opcional)</label>
+                    <input id="ct-comment" type="text" autocomplete="off">
+                </div>
+
+                <h3>Columnas</h3>
+                <div class="grid-wrap">
+                    <table class="grid columns-editor">
+                        <thead>
+                        <tr>
+                            <th>Nombre</th><th>Tipo</th><th title="Longitud, precisión (10,2) o valores de ENUM separados por coma">Longitud</th>
+                            <th title="Llave primaria">PK</th><th title="Permite NULL">NULL</th><th title="AUTO_INCREMENT">AI</th>
+                            <th title="Único">UQ</th><th>Default</th><th>Comentario</th><th></th>
+                        </tr>
+                        </thead>
+                        <tbody id="ct-columns"></tbody>
+                    </table>
+                </div>
+                <div class="toolbar">
+                    <button id="ct-add" type="button" class="secondary">+ Columna</button>
+                    <button id="ct-preview" type="button" class="secondary">Ver SQL</button>
+                    <button id="ct-create" type="submit">Crear tabla</button>
+                </div>
+            </form>
+            <pre id="ct-sql" class="code-view" hidden></pre>
+        </div>
+
+        <div id="tab-create-view" class="tab-panel" role="tabpanel" hidden>
+            <form id="cv-form" novalidate>
+                <div class="field">
+                    <label for="cv-name">Nombre de la vista</label>
+                    <input id="cv-name" type="text" autocomplete="off" placeholder="v_clientes_activos">
+                </div>
+                <div class="field">
+                    <label for="cv-select">Consulta SELECT</label>
+                    <textarea id="cv-select" class="code" rows="8" spellcheck="false" placeholder="SELECT id, nombre FROM clientes WHERE activo = 1"></textarea>
+                </div>
+                <label class="check"><input id="cv-replace" type="checkbox"> Reemplazar si ya existe (OR REPLACE)</label>
+                <div class="toolbar">
+                    <button id="cv-preview" type="button" class="secondary">Ver SQL</button>
+                    <button id="cv-create" type="submit">Crear vista</button>
+                </div>
+            </form>
+            <pre id="cv-sql" class="code-view" hidden></pre>
+        </div>
+    </section>
+</div>
+
+<script type="module" th:src="@{/js/app.js}"></script>
 </body>
 </html>
