@@ -1,9 +1,5 @@
 # MyBeaver: herramienta administrativa para MySQL
 
-Aplicación web (Kotlin + Spring Boot + JDBC puro) para administrar servidores MySQL 8.
-**No usa `information_schema` ni librerías de administración/ORM**: toda la metadata se obtiene con
-comandos nativos de MySQL (`SHOW ...`) y con tablas de sistema (`mysql.user`, `performance_schema.file_instances`).
-
 ## Cómo ejecutarla
 
 1. Define la variable de entorno `APP_ENCRYPTION_KEY` con una llave AES de 32 bytes en Base64
